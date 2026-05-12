@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Cuestionario Programacion Movil</title>
+    <style>
+        body { font-family: sans-serif; margin: 20px; background: #eee; }
+        .contenedor { background: white; padding: 20px; max-width: 500px; margin: auto; border: 1px solid #ccc; }
+        h2 { border-bottom: 1px solid #ccc; padding-bottom: 5px; }
+        .nivel { display: none; }
+        .nivel.activo { display: block; }
+        .pregunta { margin-bottom: 15px; }
+        .opciones { margin-top: 5px; }
+        button { margin-top: 10px; padding: 10px; cursor: pointer; }
+        .error { color: red; font-size: 14px; display: none; }
+    </style>
+</head>
+<body>
+
+<div class="contenedor">
+    <h1>Evaluacion de Reglamento</h1>
+    
+    {% for n in niveles %}
+    <div id="div-nivel-{{ n.nivel }}" class="nivel {% if n.nivel == 1 %}activo{% endif %}">
+        <h2>{{ n.titulo }}</h2>
+        {% for p in n.preguntas %}
+        <div class="pregunta">
+            <p><strong>{{ p.texto }}</strong></p>
+            <div class="opciones" data-correcta="{{ p.correcta }}">
+                {% for o in p.opciones %}
+                <label>
+                    <input type="radio" name="{{ p.id }}" value="{{ o }}"> {{ o }}
+                </label><br>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+        <p id="error-{{ n.nivel }}" class="error">Alguna respuesta esta mal, intenta de nuevo.</p>
+        <button onclick="validarNivel({{ n.nivel }})">Siguiente Nivel</button>
+    </div>
+    {% endfor %}
+
+    <div id="final" class="nivel">
+        <h2>¡Felicidades!</h2>
+        <p>Has pasado todos los niveles del reglamento.</p>
+        <button onclick="location.reload()">Reiniciar</button>
+    </div>
+</div>
+
+<script>
+    function validarNivel(nivel) {
+        let div = document.getElementById('div-nivel-' + nivel);
+        let opciones = div.querySelectorAll('.opciones');
+        let correctas = 0;
+
+        opciones.forEach(cont => {
+            let correcta = cont.getAttribute('data-correcta');
+            let seleccionada = cont.querySelector('input:checked');
+            if (seleccionada && seleccionada.value === correcta) {
+                correctas++;
+            }
+        });
+
+        if (correctas === opciones.length) {
+            div.classList.remove('activo');
+            let siguiente = document.getElementById('div-nivel-' + (nivel + 1));
+            if (siguiente) {
+                siguiente.classList.add('activo');
+            } else {
+                document.getElementById('final').classList.add('activo');
+            }
+        } else {
+            document.getElementById('error-' + nivel).style.display = 'block';
+        }
+    }
+</script>
+
+</body>
+</html>
