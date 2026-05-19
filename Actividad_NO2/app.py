@@ -4,7 +4,6 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    # Datos básicos para el cuestionario
     preguntas_por_nivel = [
         {
             "nivel": 1,
@@ -20,7 +19,7 @@ def index():
                     "id": "p2",
                     "texto": "¿Cuantas faltas se permiten para no ir a examen final?",
                     "opciones": ["2", "3", "5"],
-                    "correcta": "2" # 3 ya es final según el texto original "3 faltas = Final"
+                    "correcta": "2"
                 }
             ]
         },
